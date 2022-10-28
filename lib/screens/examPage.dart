@@ -120,9 +120,6 @@ class _ExamPageState extends State<ExamPage> {
           if (details.delta.dy < 0) {
             quetionList(context, h, w);
           }
-
-          // // Swiping in left direction.
-          // if (details.delta.dx < 0) {}
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
