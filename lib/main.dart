@@ -14,8 +14,11 @@ import 'package:smart_acadamy/screens/practicePaper.dart';
 import 'package:smart_acadamy/screens/resultPage.dart';
 import 'package:smart_acadamy/screens/subcategories.dart';
 import 'package:smart_acadamy/theme.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
   ));
@@ -36,7 +39,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Smart_Acadamy',
       theme: SmartTheme().saTheme,
-      initialRoute: OnBoarding1.id,
+      initialRoute: Login.id,
       routes: {
         OnBoarding1.id: ((context) => const OnBoarding1()),
         OnBoarding2.id: ((context) => const OnBoarding2()),

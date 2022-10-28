@@ -45,7 +45,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.1
   page_transition: ^2.0.9
+  firebase_core:
+  firebase_auth:
   sliding_up_panel: ^2.0.0+1
+  pinput: ^2.2.16
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
