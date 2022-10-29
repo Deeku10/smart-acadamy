@@ -20,6 +20,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   String phone = "";
   String oTP = "";
+  bool loading = true;
   FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
@@ -171,96 +172,128 @@ class _LoginState extends State<Login> {
                     ),
                     Button(
                       floatOnTap: () async {
-                        await FirebaseAuth.instance.verifyPhoneNumber(
-                          phoneNumber: '+91 ${phone}',
-                          verificationCompleted:
-                              (PhoneAuthCredential credential) {},
-                          verificationFailed: (FirebaseAuthException e) {
-                            final snackBar = SnackBar(
-                              content: Text(e.toString()),
-                            );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                          },
-                          codeSent:
-                              (String verificationId, int? resendToken) async {
-                            showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                //title: const Text("Alert Dialog Box"),
+                        if (phone.length != 10) {
+                          final snackBar = SnackBar(
+                            content: Text("Enter a proper mobile number"),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        } else {
+                          loading == true
+                              ? showDialog(
+                                  barrierDismissible: true,
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                      // title: const Text("Loading"),
 
-                                content: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      "Enter Otp",
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: h * 0.025,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      height: h * 0.01,
-                                    ),
-                                    Pinput(
-                                      length: 6,
-                                      pinputAutovalidateMode:
-                                          PinputAutovalidateMode.onSubmit,
-                                      showCursor: true,
-                                      onCompleted: (value) {
-                                        oTP = value;
-                                      },
-                                    ),
-                                    SizedBox(
-                                      height: h * 0.03,
-                                    ),
-                                    Button(
-                                        floatOnTap: () async {
-                                          try {
-                                            // Create a PhoneAuthCredential with the code
-                                            PhoneAuthCredential credential =
-                                                PhoneAuthProvider.credential(
-                                                    verificationId:
-                                                        verificationId,
-                                                    smsCode: oTP);
+                                      content: ImageAndText(
+                                    h: h * 0.7,
+                                    assetImage: "assets/images/loading.png",
+                                    descriptionText: "Loading...",
+                                  )),
+                                )
+                              : () {};
+                          await FirebaseAuth.instance.verifyPhoneNumber(
+                            phoneNumber: '+91 ${phone}',
+                            verificationCompleted:
+                                (PhoneAuthCredential credential) {},
+                            verificationFailed: (FirebaseAuthException e) {
+                              // loading = false;
+                              // setState(() {});
+                              Navigator.pop(context);
+                              final snackBar = SnackBar(
+                                content: Text(e.toString()),
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            },
+                            codeSent: (String verificationId,
+                                int? resendToken) async {
+                              // loading = false;
+                              // setState(() {});
+                              Navigator.pop(context);
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  //title: const Text("Alert Dialog Box"),
 
-                                            // Sign the user in (or link) with the credential
-                                            await auth.signInWithCredential(
-                                                credential);
-                                            Navigator.pushNamedAndRemoveUntil(
-                                                context,
-                                                Home.id,
-                                                (route) => false);
-                                          } catch (e) {
-                                            final snackBar = SnackBar(
-                                              content: Text(e.toString()),
-                                            );
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(snackBar);
-                                          }
+                                  content: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        "Enter Otp",
+                                        style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: h * 0.025,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        height: h * 0.01,
+                                      ),
+                                      Pinput(
+                                        length: 6,
+                                        pinputAutovalidateMode:
+                                            PinputAutovalidateMode.onSubmit,
+                                        showCursor: true,
+                                        onCompleted: (value) {
+                                          oTP = value;
                                         },
-                                        w: w,
-                                        h: h,
-                                        floatingButtonText: "Confirm OTP",
-                                        buttonColor: Color(0xff9700CC),
-                                        textColor: Colors.white),
-                                    TextButton(
-                                        onPressed: () async {},
-                                        child: Text(
-                                          "RESEND OTP",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w800),
-                                        ))
-                                  ],
+                                      ),
+                                      SizedBox(
+                                        height: h * 0.03,
+                                      ),
+                                      Button(
+                                          floatOnTap: () async {
+                                            try {
+                                              // Create a PhoneAuthCredential with the code
+                                              PhoneAuthCredential credential =
+                                                  PhoneAuthProvider.credential(
+                                                      verificationId:
+                                                          verificationId,
+                                                      smsCode: oTP);
+
+                                              // Sign the user in (or link) with the credential
+                                              await auth.signInWithCredential(
+                                                  credential);
+                                              Navigator.pushNamedAndRemoveUntil(
+                                                  context,
+                                                  Home.id,
+                                                  (route) => false);
+                                            } catch (e) {
+                                              final snackBar = SnackBar(
+                                                content: Text(e.toString()),
+                                              );
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackBar);
+                                            }
+                                          },
+                                          w: w,
+                                          h: h,
+                                          floatingButtonText: "Confirm OTP",
+                                          buttonColor: Color(0xff9700CC),
+                                          textColor: Colors.white),
+                                      TextButton(
+                                          onPressed: () async {},
+                                          child: Text(
+                                            "RESEND OTP",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w800),
+                                          ))
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                          codeAutoRetrievalTimeout: (String verificationId) {},
-                        );
+                              );
+                            },
+                            codeAutoRetrievalTimeout: (String verificationId) {
+                              setState(() {
+                                loading = false;
+                              });
+                            },
+                          );
+                        }
                       },
                       h: h,
                       w: w,

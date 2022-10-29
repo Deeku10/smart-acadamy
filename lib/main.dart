@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Smart_Acadamy',
       theme: SmartTheme().saTheme,
-      initialRoute: Login.id,
+      initialRoute: OnBoarding1.id,
       routes: {
         OnBoarding1.id: ((context) => const OnBoarding1()),
         OnBoarding2.id: ((context) => const OnBoarding2()),
