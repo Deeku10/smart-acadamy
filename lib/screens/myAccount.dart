@@ -1,9 +1,13 @@
+// ignore_for_file: unused_import, depend_on_referenced_packages, file_names, no_leading_underscores_for_local_identifiers, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:smart_acadamy/heightWidth.dart';
 import 'package:smart_acadamy/screens/home.dart';
 import 'package:smart_acadamy/screens/login.dart';
 import 'package:smart_acadamy/widgets/button.dart';
 import 'package:page_transition/page_transition.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MyAccount extends StatelessWidget {
   const MyAccount({Key? key}) : super(key: key);
@@ -12,6 +16,7 @@ class MyAccount extends StatelessWidget {
   Widget build(BuildContext context) {
     var h = context.height;
     var w = context.width;
+    // ignore: unused_local_variable
     int _selectedIndex = 1;
 
     return Scaffold(
@@ -27,7 +32,7 @@ class MyAccount extends StatelessWidget {
       ),
       Container(
         margin: EdgeInsets.only(top: h * 0.3),
-        padding: EdgeInsets.symmetric(horizontal: 25),
+        padding: const EdgeInsets.symmetric(horizontal: 25),
         decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -42,7 +47,7 @@ class MyAccount extends StatelessWidget {
             Text(
               "Master JEE Acadamy",
               style: TextStyle(
-                  color: Color(0xff4D4949),
+                  color: const Color(0xff4D4949),
                   fontWeight: FontWeight.w900,
                   fontSize: h * 0.026),
             ),
@@ -69,7 +74,8 @@ class MyAccount extends StatelessWidget {
                   ),
                   CircleAvatar(
                     radius: h * 0.07,
-                    backgroundImage: AssetImage("assets/images/profile.png"),
+                    backgroundImage:
+                        const AssetImage("assets/images/profile.png"),
                   ),
                   Text(
                     "Aravind Dada",
@@ -90,15 +96,16 @@ class MyAccount extends StatelessWidget {
               height: h * 0.04,
             ),
             Button(
-              floatOnTap: () {
-                // logout system
-                Navigator.popAndPushNamed(context, Login.id);
+              floatOnTap: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushNamedAndRemoveUntil(
+                    context, Login.id, (route) => false);
               },
               h: h,
               w: w,
               floatingButtonText: 'LOGOUT',
               textColor: Colors.white,
-              buttonColor: Color(0xff9700CC),
+              buttonColor: const Color(0xff9700CC),
             ),
           ],
         ),

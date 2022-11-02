@@ -1,13 +1,17 @@
+// ignore_for_file: unnecessary_import, depend_on_referenced_packages, unused_import, unused_local_variable, prefer_const_constructors, use_build_context_synchronously
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:smart_acadamy/heightWidth.dart';
 import 'package:smart_acadamy/screens/home.dart';
+import 'package:smart_acadamy/screens/networkError.dart';
 import 'package:smart_acadamy/widgets/button.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smart_acadamy/widgets/loadingWidget.dart';
 import 'package:pinput/pinput.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -23,33 +27,16 @@ class _LoginState extends State<Login> {
   bool loading = true;
   FirebaseAuth auth = FirebaseAuth.instance;
   @override
+  void initState() {
+    super.initState();
+    Provider.of<ConnectivityProvider>(context, listen: false).startMonitoring();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var h = context.height;
     var w = context.width;
-    final defaultPinTheme = PinTheme(
-      width: 56,
-      height: 56,
-      textStyle: TextStyle(
-          fontSize: 20,
-          color: Color.fromRGBO(30, 60, 87, 1),
-          fontWeight: FontWeight.w600),
-      decoration: BoxDecoration(
-        border: Border.all(color: Color.fromRGBO(234, 239, 243, 1)),
-        borderRadius: BorderRadius.circular(20),
-      ),
-    );
-
-    final focusedPinTheme = defaultPinTheme.copyDecorationWith(
-      border: Border.all(color: Color.fromRGBO(114, 178, 238, 1)),
-      borderRadius: BorderRadius.circular(8),
-    );
-
-    final submittedPinTheme = defaultPinTheme.copyWith(
-      decoration: defaultPinTheme.decoration?.copyWith(
-        color: Color.fromRGBO(234, 239, 243, 1),
-      ),
-    );
-    return Scaffold(
+    return pageUI(Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         body: Stack(
@@ -74,7 +61,7 @@ class _LoginState extends State<Login> {
                       text:
                           'To use Smart Academy, your accademy should be registered in ',
                       style: TextStyle(
-                        color: Color(0xff676767),
+                        color: const Color(0xff676767),
                         fontSize: (h * 0.02),
                       ),
                       children: const <TextSpan>[
@@ -146,7 +133,7 @@ class _LoginState extends State<Login> {
                         onChanged: (value) {
                           phone = value;
                         },
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Enter your phone',
                           hintText: 'EX:9443322443',
@@ -193,7 +180,7 @@ class _LoginState extends State<Login> {
                                 )
                               : () {};
                           await FirebaseAuth.instance.verifyPhoneNumber(
-                            phoneNumber: '+91 ${phone}',
+                            phoneNumber: '+91 $phone',
                             verificationCompleted:
                                 (PhoneAuthCredential credential) {},
                             verificationFailed: (FirebaseAuthException e) {
@@ -326,6 +313,6 @@ class _LoginState extends State<Login> {
               ),
             )
           ],
-        ));
+        )));
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: file_names, sized_box_for_whitespace
+
 import 'package:flutter/material.dart';
 import 'package:smart_acadamy/widgets/smallButton.dart';
 
@@ -19,11 +21,7 @@ class AlertWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      // insetPadding: EdgeInsets.al,
-      // title: const
-      // shape: const ShapeBorder(),
       content: Container(
-        // padding: EdgeInsets.symmetric(vertical: h * 0.05),
         height: h * 0.30,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -64,7 +62,7 @@ class AlertWidget extends StatelessWidget {
                     onTap2();
                   },
                   buttonText: "No",
-                  color: Color(0xff9700CC)),
+                  color: const Color(0xff9700CC)),
             ],
           ),
         )

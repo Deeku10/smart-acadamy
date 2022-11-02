@@ -1,3 +1,5 @@
+// ignore_for_file: file_names, no_logic_in_create_state, unnecessary_this, sort_child_properties_last
+
 import 'package:flutter/material.dart';
 
 class OptionContainer extends StatefulWidget {
@@ -50,8 +52,8 @@ class _OptionContainerState extends State<OptionContainer> {
           ),
         ),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: tap ? Colors.green : Color(0xfff5f5f5)),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            color: tap ? Colors.green : const Color(0xfff5f5f5)),
       ),
     );
   }

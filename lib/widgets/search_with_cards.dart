@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types, prefer_const_constructors, sort_child_properties_last
+
 import 'package:flutter/material.dart';
 import 'package:smart_acadamy/models/categoriesGrid.dart';
 
@@ -80,9 +82,10 @@ class Search_with_cards extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: w * 0.07),
                     width: w,
                     decoration: BoxDecoration(
+                        // ignore: prefer_const_literals_to_create_immutables
                         boxShadow: [
                           BoxShadow(
-                              color: Color.fromARGB(172, 158, 158, 158),
+                              color: const Color.fromARGB(172, 158, 158, 158),
                               spreadRadius: 0.3,
                               blurRadius: 5,
                               offset: Offset(3, 2)),

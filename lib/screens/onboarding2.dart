@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:flutter/material.dart';
 import 'package:smart_acadamy/heightWidth.dart';
 import 'package:page_transition/page_transition.dart';

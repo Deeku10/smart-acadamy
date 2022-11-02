@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages, prefer_const_constructors_in_immutables
+// ignore_for_file: depend_on_referenced_packages, prefer_const_constructors_in_immutables, file_names
 
 import 'package:flutter/material.dart';
 // import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -6,12 +6,14 @@ import 'package:smart_acadamy/heightWidth.dart';
 import 'package:page_transition/page_transition.dart';
 // import 'package:smart_acadamy/models/question.dart';
 import 'package:smart_acadamy/screens/home.dart';
+import 'package:smart_acadamy/screens/networkError.dart';
 import 'package:smart_acadamy/screens/resultPage.dart';
 // import 'package:smart_acadamy/screens/subcategories.dart';
 import 'package:smart_acadamy/widgets/alertDialog.dart';
 import 'package:smart_acadamy/widgets/optionContainer.dart';
 // import 'package:smart_acadamy/widgets/search_with_cards.dart';
 import 'package:smart_acadamy/widgets/smallButton.dart';
+import 'package:provider/provider.dart';
 
 class ExamPage extends StatefulWidget {
   ExamPage({Key? key}) : super(key: key);
@@ -22,6 +24,12 @@ class ExamPage extends StatefulWidget {
 }
 
 class _ExamPageState extends State<ExamPage> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ConnectivityProvider>(context, listen: false).startMonitoring();
+  }
+
   int count = 0;
   List answers = [
     ["5/3	", "5/4", "3/5", "4/5"],
@@ -48,210 +56,213 @@ class _ExamPageState extends State<ExamPage> {
     bool op1 = false, op2 = false, op3 = false, op4 = false;
     var h = context.height;
     var w = context.width;
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: const Color(0xff7F63FE),
-        elevation: 0,
-        actions: [
-          Center(
-            child: SmallButton(
-              h: h,
-              w: w,
-              buttonText: 'EXIT',
-              onTap: () {
-                showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) => AlertWidget(
-                          h: h,
-                          w: w,
-                          image: "assets/images/exitImage.png",
-                          text: "Are you sure to exit exam?",
-                          onTap1: () {
-                            Navigator.push(
-                                context,
-                                PageTransition(
-                                    type: PageTransitionType.leftToRight,
-                                    child: const Home()));
-                          },
-                          onTap2: () {
-                            Navigator.pop(context);
-                          },
-                        ));
-              },
-              color: Color(0x33FFFFFF),
-            ),
-          ),
-          SizedBox(
-            width: w * 0.015,
-          ),
-          Center(
-            child: SmallButton(
-              h: h,
-              w: w,
-              buttonText: 'FINISH',
-              onTap: () {
-                Navigator.push(
-                    context,
-                    PageTransition(
-                        type: PageTransitionType.leftToRight,
-                        child: const ResultPage()));
-              },
-              color: const Color(0xff30D787),
-            ),
-          ),
-          SizedBox(
-            width: w * 0.05,
-          )
-        ],
-        title: Column(children: [
-          Text(
-            "Basics",
-            style: TextStyle(fontSize: h * 0.022, fontWeight: FontWeight.w900),
-          ),
-          Text("Algebra",
-              style:
-                  TextStyle(fontSize: h * 0.018, fontWeight: FontWeight.w600))
-        ]),
-      ),
-      body: GestureDetector(
-        onPanUpdate: (details) {
-          // Swiping in right direction.
-          if (details.delta.dy < 0) {
-            quetionList(context, h, w);
-          }
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: h * 0.03, horizontal: w * 0.05),
-              child: SizedBox(
-                width: w,
-                child: Text(
-                  questions[count],
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: h * 0.026),
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                op1 = true;
-                op2 = false;
-                op3 = false;
-                op4 = false;
-                setState(() {});
-              },
-              child: OptionContainer(
+    return pageUI(
+      Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: const Color(0xff7F63FE),
+          elevation: 0,
+          actions: [
+            Center(
+              child: SmallButton(
                 h: h,
-                answer: answers[count][0],
                 w: w,
-                tapped: op1,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                op1 = false;
-                op2 = true;
-                op3 = false;
-                op4 = false;
-                setState(() {});
-              },
-              child: OptionContainer(
-                h: h,
-                answer: answers[count][1],
-                w: w,
-                tapped: op2,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                op1 = false;
-                op2 = false;
-                op3 = true;
-                op4 = false;
-                setState(() {});
-              },
-              child: OptionContainer(
-                h: h,
-                answer: answers[count][2],
-                w: w,
-                tapped: op3,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                op1 = false;
-                op2 = false;
-                op3 = false;
-                op4 = true;
-                setState(() {});
-              },
-              child: OptionContainer(
-                h: h,
-                answer: answers[count][3],
-                w: w,
-                tapped: op4,
+                buttonText: 'EXIT',
+                onTap: () {
+                  showDialog<String>(
+                      context: context,
+                      builder: (BuildContext context) => AlertWidget(
+                            h: h,
+                            w: w,
+                            image: "assets/images/exitImage.png",
+                            text: "Are you sure to exit exam?",
+                            onTap1: () {
+                              Navigator.push(
+                                  context,
+                                  PageTransition(
+                                      type: PageTransitionType.leftToRight,
+                                      child: const Home()));
+                            },
+                            onTap2: () {
+                              Navigator.pop(context);
+                            },
+                          ));
+                },
+                color: const Color(0x33FFFFFF),
               ),
             ),
             SizedBox(
-              height: h * 0.22,
+              width: w * 0.015,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SmallButton(
-                    h: h * 1.1,
-                    w: w * 1.2,
-                    onTap: () {
-                      if (count != 0) {
-                        setState(() {
-                          --count;
-                        });
-                      }
-                    },
-                    buttonText: "BACK",
-                    color: Colors.grey),
-                Column(
-                  children: [
-                    CircleAvatar(
-                      radius: h * 0.034,
-                      backgroundColor: const Color(0xffF9C954),
-                      child: Text(
-                        "${count + 1}",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        quetionList(context, h, w);
-                      },
-                      child: Text(
-                        "ᐱ",
-                        style: TextStyle(
-                            fontSize: h * 0.04, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
-                SmallButton(
-                    h: h * 1.1,
-                    w: w * 1.2,
-                    onTap: () {
-                      count = count + 1;
-                      // if (count != questions.length - 1) {
-                      setState(() {});
-                      // }
-                    },
-                    buttonText: "NEXT",
-                    color: Color(0xff9700CC)),
-              ],
+            Center(
+              child: SmallButton(
+                h: h,
+                w: w,
+                buttonText: 'FINISH',
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      PageTransition(
+                          type: PageTransitionType.leftToRight,
+                          child: const ResultPage()));
+                },
+                color: const Color(0xff30D787),
+              ),
             ),
+            SizedBox(
+              width: w * 0.05,
+            )
           ],
+          title: Column(children: [
+            Text(
+              "Basics",
+              style:
+                  TextStyle(fontSize: h * 0.022, fontWeight: FontWeight.w900),
+            ),
+            Text("Algebra",
+                style:
+                    TextStyle(fontSize: h * 0.018, fontWeight: FontWeight.w600))
+          ]),
+        ),
+        body: GestureDetector(
+          onPanUpdate: (details) {
+            // Swiping in right direction.
+            if (details.delta.dy < 0) {
+              quetionList(context, h, w);
+            }
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: h * 0.03, horizontal: w * 0.05),
+                child: SizedBox(
+                  width: w,
+                  child: Text(
+                    questions[count],
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: h * 0.026),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  op1 = true;
+                  op2 = false;
+                  op3 = false;
+                  op4 = false;
+                  setState(() {});
+                },
+                child: OptionContainer(
+                  h: h,
+                  answer: answers[count][0],
+                  w: w,
+                  tapped: op1,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  op1 = false;
+                  op2 = true;
+                  op3 = false;
+                  op4 = false;
+                  setState(() {});
+                },
+                child: OptionContainer(
+                  h: h,
+                  answer: answers[count][1],
+                  w: w,
+                  tapped: op2,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  op1 = false;
+                  op2 = false;
+                  op3 = true;
+                  op4 = false;
+                  setState(() {});
+                },
+                child: OptionContainer(
+                  h: h,
+                  answer: answers[count][2],
+                  w: w,
+                  tapped: op3,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  op1 = false;
+                  op2 = false;
+                  op3 = false;
+                  op4 = true;
+                  setState(() {});
+                },
+                child: OptionContainer(
+                  h: h,
+                  answer: answers[count][3],
+                  w: w,
+                  tapped: op4,
+                ),
+              ),
+              SizedBox(
+                height: h * 0.22,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SmallButton(
+                      h: h * 1.1,
+                      w: w * 1.2,
+                      onTap: () {
+                        if (count != 0) {
+                          setState(() {
+                            --count;
+                          });
+                        }
+                      },
+                      buttonText: "BACK",
+                      color: Colors.grey),
+                  Column(
+                    children: [
+                      CircleAvatar(
+                        radius: h * 0.034,
+                        backgroundColor: const Color(0xffF9C954),
+                        child: Text(
+                          "${count + 1}",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.black),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          quetionList(context, h, w);
+                        },
+                        child: Text(
+                          "ᐱ",
+                          style: TextStyle(
+                              fontSize: h * 0.04, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SmallButton(
+                      h: h * 1.1,
+                      w: w * 1.2,
+                      onTap: () {
+                        count = count + 1;
+                        // if (count != questions.length - 1) {
+                        setState(() {});
+                        // }
+                      },
+                      buttonText: "NEXT",
+                      color: const Color(0xff9700CC)),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -270,12 +281,13 @@ class _ExamPageState extends State<ExamPage> {
             child: CircleAvatar(
               backgroundColor: Colors.black,
               maxRadius: h * 0.04,
-              child: Icon(Icons.close),
+              child: const Icon(Icons.close),
             ),
           ),
           body: Wrap(
             // direction: Axis.vertical,
             children: [
+              // ignore: sized_box_for_whitespace
               Container(
                 height: h,
                 width: w,
@@ -285,7 +297,7 @@ class _ExamPageState extends State<ExamPage> {
                       // padding: const EdgeInsets.only(bottom: 100),
                       height: h * 0.35,
                       width: w,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           image: DecorationImage(
                               image:
                                   AssetImage("assets/images/allQuestions.png"),
@@ -308,16 +320,16 @@ class _ExamPageState extends State<ExamPage> {
                             child: ListView(
                               // padding: EdgeInsets.symmetric(
                               //     vertical: h * 0.04),
-                              physics: BouncingScrollPhysics(),
+                              physics: const BouncingScrollPhysics(),
                               children: [
                                 // SizedBox(
                                 //   height: h * 0.035,
                                 // ),
                                 GridView.builder(
-                                  physics: BouncingScrollPhysics(),
+                                  physics: const BouncingScrollPhysics(),
                                   shrinkWrap: true,
                                   gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 4,
                                     crossAxisSpacing: 30.0,
                                     mainAxisSpacing: 15.0,
@@ -326,7 +338,7 @@ class _ExamPageState extends State<ExamPage> {
                                   itemBuilder: (context, index) {
                                     return Container(
                                       height: h * 0.07125,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         color: Colors.blue,
                                         shape: BoxShape.circle,
                                       ),
@@ -361,7 +373,7 @@ class _ExamPageState extends State<ExamPage> {
                                 Container(
                                   height: h * 0.023,
                                   width: h * 0.023,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                       color: Colors.grey,
                                       shape: BoxShape.circle),
                                 ),
@@ -380,7 +392,7 @@ class _ExamPageState extends State<ExamPage> {
                                 Container(
                                   height: h * 0.023,
                                   width: h * 0.023,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                       color: Colors.greenAccent,
                                       shape: BoxShape.circle),
                                 ),
@@ -399,7 +411,7 @@ class _ExamPageState extends State<ExamPage> {
                                 Container(
                                   height: h * 0.023,
                                   width: h * 0.023,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                       color: Colors.redAccent,
                                       shape: BoxShape.circle),
                                 ),

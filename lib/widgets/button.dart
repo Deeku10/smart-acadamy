@@ -28,13 +28,14 @@ class Button extends StatelessWidget {
         height: h * 0.07,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
+          // ignore: prefer_const_literals_to_create_immutables
           boxShadow: [
             // ignore: prefer_const_constructors
             BoxShadow(
-                color: Color.fromARGB(199, 158, 158, 158),
+                color: const Color.fromARGB(199, 158, 158, 158),
                 blurRadius: 25,
                 spreadRadius: 2,
-                offset: Offset(3, 3))
+                offset: const Offset(3, 3))
           ],
           color: buttonColor,
         ),

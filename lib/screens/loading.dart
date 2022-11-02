@@ -1,3 +1,5 @@
+// ignore_for_file: implementation_imports, unnecessary_import
+
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:smart_acadamy/heightWidth.dart';
@@ -15,7 +17,6 @@ class _LoadingState extends State<Loading> {
   @override
   Widget build(BuildContext context) {
     var h = context.height;
-    var w = context.width;
     return LoadingWidget(
       h: h,
       assetImage: "assets/images/loading.png",

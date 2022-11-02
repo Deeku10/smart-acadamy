@@ -1,12 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:flutter/services.dart';
 import 'package:smart_acadamy/heightWidth.dart';
+// ignore: depend_on_referenced_packages
 import 'package:page_transition/page_transition.dart';
 import 'package:smart_acadamy/models/categoriesGrid.dart';
+import 'package:smart_acadamy/screens/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smart_acadamy/screens/myAccount.dart';
+import 'package:smart_acadamy/screens/networkError.dart';
 import 'package:smart_acadamy/screens/subcategories.dart';
 import 'package:smart_acadamy/widgets/alertDialog.dart';
+import 'package:smart_acadamy/widgets/loadingWidget.dart';
 import 'package:smart_acadamy/widgets/search_with_cards.dart';
+import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -18,54 +28,188 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
-  List<Widget> _pages = <Widget>[
-    HomePage(),
-    MyAccount(),
+  final List<Widget> _pages = <Widget>[
+    const HomePage(),
+    const MyAccount(),
   ];
+  // AppUpdateInfo? _updateInfo;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
+  // bool _flexibleUpdateAvailable = false;
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  // Future<void> checkForUpdate() async {
+  //   InAppUpdate.checkForUpdate().then((info) {
+  //     info.updateAvailability == UpdateAvailability.updateAvailable
+  //         ? () {
+  //             InAppUpdate.performImmediateUpdate()
+  //                 // ignore: invalid_return_type_for_catch_error
+  //                 .catchError((e) => showSnack(e.toString()));
+  //           }
+  //         : () {};
+  //   }).catchError((e) {
+  //     showSnack(e.toString());
+  //   });
+  // }
+
+  // void showSnack(String text) {
+  //   if (_scaffoldKey.currentContext != null) {
+  //     ScaffoldMessenger.of(_scaffoldKey.currentContext!)
+  //         .showSnackBar(SnackBar(content: Text(text)));
+  //   }
+  // }
+
+  // @override
+  // // ignore: must_call_super
+  // initState() {
+  //   checkForUpdate();
+  // }
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ConnectivityProvider>(context, listen: false).startMonitoring();
+  }
+
+  Future<List<String>> getStatus(docName) async {
+    List<String> a = <String>[];
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection("students")
+          .doc("$docName")
+          .get();
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        if (data == null) {
+          return a;
+        } else {
+          for (var e in snapshot.data()!.values) {
+            print("data123" + e.toString());
+            a.add(e['status']);
+          }
+        }
+      } else {
+        return a;
+      }
+    } catch (e) {
+      print(e.toString());
+
+      a.add("noData");
+    }
+    // if (a == null) {
+    //   a.add("noData");
+    // }
+    return a;
+  }
+
   @override
   Widget build(BuildContext context) {
+    var auth = FirebaseAuth.instance.currentUser;
     var h = context.height;
     var w = context.width;
+    return pageUI(
+      FutureBuilder(
+        future: getStatus(auth?.uid),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data != null) {
+              if (snapshot.data.toString() == "[active]") {
+                return WillPopScope(
+                  onWillPop: () async {
+                    return await showDialog(
+                        context: context,
+                        builder: (context) => AlertWidget(
+                            h: h,
+                            w: w,
+                            image: "assets/images/Schoolbus.png",
+                            text: "Are you sure to exit?",
+                            onTap1: () {
+                              SystemNavigator.pop();
+                            },
+                            onTap2: () {
+                              Navigator.pop(context);
+                            }));
+                  },
+                  child: Scaffold(
+                      key: _scaffoldKey,
+                      resizeToAvoidBottomInset: false,
+                      bottomNavigationBar: BottomNavigationBar(
+                        selectedFontSize: h * 0.018,
 
-    return WillPopScope(
-      onWillPop: () async {
-        return await showDialog(
-            context: context,
-            builder: (context) => AlertWidget(
-                h: h,
-                w: w,
-                image: "assets/images/Schoolbus.png",
-                text: "Are you sure to exit?",
-                onTap1: () {
-                  SystemNavigator.pop();
-                },
-                onTap2: () {
-                  Navigator.pop(context);
-                }));
-      },
-      child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          bottomNavigationBar: BottomNavigationBar(
-            selectedFontSize: h * 0.018,
+                        selectedItemColor: Colors.black,
+                        backgroundColor: const Color(0xffF9C954),
 
-            selectedItemColor: Colors.black,
-            backgroundColor: Color(0xffF9C954),
+                        currentIndex: _selectedIndex, //New
+                        onTap: (index) =>
+                            setState(() => _selectedIndex = index),
+                        items: const <BottomNavigationBarItem>[
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.home_filled),
+                            label: 'Home',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.person),
+                            label: 'Account',
+                          ),
+                        ],
+                      ),
+                      body: _pages[_selectedIndex]),
+                );
+              } else if (snapshot.data.toString() == "[expired]") {
+                return LoadingWidgetWithButton(
+                  assetImage: 'assets/images/expired.png',
+                  buttonText: 'Logout',
+                  h: h,
+                  w: w,
+                  onTap: () async {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, Login.id, (route) => false);
+                  },
+                  descriptionText:
+                      'Your network have been expired.\nkindly contact your institute',
+                );
+              } else {
+                print("dfsdf" + snapshot.data.toString());
 
-            currentIndex: _selectedIndex, //New
-            onTap: (index) => setState(() => _selectedIndex = index),
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home_filled),
-                label: 'Home',
+                return LoadingWidgetWithButton(
+                  assetImage: 'assets/images/nonumber.png',
+                  buttonText: 'Logout',
+                  h: h,
+                  w: w,
+                  onTap: () async {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, Login.id, (route) => false);
+                  },
+                  descriptionText:
+                      'The phone number \n is not linked with any institute',
+                );
+              }
+            } else {
+              return NetworkError();
+            }
+          } else {
+            return Scaffold(
+              backgroundColor: Colors.white,
+              body: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(width: w),
+                  // ignore: prefer_const_constructors
+                  CircularProgressIndicator(
+                    color: Colors.purpleAccent,
+                  ),
+                ],
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Account',
-              ),
-            ],
-          ),
-          body: _pages[_selectedIndex]),
+            );
+          }
+        },
+      ),
     );
+
+    // return pageUI();
   }
 }
 
@@ -154,18 +298,18 @@ class _HomePageState extends State<HomePage> {
                 ),
                 CircleAvatar(
                   backgroundImage:
-                      AssetImage("assets/images/homeTopCircle.png"),
+                      const AssetImage("assets/images/homeTopCircle.png"),
+                  radius: w * 0.09,
                   child: Text(
                     "12",
                     style: TextStyle(
                         fontWeight: FontWeight.bold, fontSize: h * 0.021),
                   ),
-                  radius: w * 0.09,
                 ),
                 Text(
                   "114/500",
                   style: TextStyle(
-                      color: Color(0xff725902),
+                      color: const Color(0xff725902),
                       fontSize: h * 0.025,
                       letterSpacing: 1.1,
                       fontWeight: FontWeight.w900),
@@ -181,7 +325,7 @@ class _HomePageState extends State<HomePage> {
             height: h * 0.1,
             width: w * 0.8,
             decoration: BoxDecoration(
-                color: Color(0xd9ffffff),
+                color: const Color(0xd9ffffff),
                 borderRadius: BorderRadius.circular(20)),
             child: Row(
               children: [
@@ -189,7 +333,8 @@ class _HomePageState extends State<HomePage> {
                   width: w * 0.07,
                 ),
                 CircleAvatar(
-                  backgroundImage: AssetImage("assets/images/profile.png"),
+                  backgroundImage:
+                      const AssetImage("assets/images/profile.png"),
                   backgroundColor: Colors.black,
                   radius: h * 0.032,
                 ),
@@ -204,7 +349,7 @@ class _HomePageState extends State<HomePage> {
                       text: TextSpan(
                         // Note: Styles for TextSpans must be explicitly defined.
                         // Child text spans will inherit styles from parent
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14.0,
                           color: Colors.black,
                         ),
@@ -227,7 +372,7 @@ class _HomePageState extends State<HomePage> {
                     // ),
                     Text(
                       "Good ${greeting()}",
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold, color: Colors.grey),
                     )
                   ],

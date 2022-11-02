@@ -49,6 +49,10 @@ dev_dependencies:
   firebase_auth:
   sliding_up_panel: ^2.0.0+1
   pinput: ^2.2.16
+  in_app_update: ^3.0.0
+  connectivity_plus:
+  provider:
+  cloud_firestore:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
