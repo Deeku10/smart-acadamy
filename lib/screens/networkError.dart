@@ -26,7 +26,7 @@ class _NetworkErrorState extends State<NetworkError> {
     return LoadingWidget(
       h: h,
       assetImage: "assets/images/NoInternetConnection.png",
-      descriptionText: "    No Network\nTake a long breath",
+      descriptionText: "No Network\nTake a long breath",
     );
   }
 }

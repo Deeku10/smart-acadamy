@@ -7,6 +7,8 @@ import 'package:smart_acadamy/heightWidth.dart';
 // ignore: depend_on_referenced_packages
 import 'package:page_transition/page_transition.dart';
 import 'package:smart_acadamy/models/categoriesGrid.dart';
+import 'package:smart_acadamy/models/institution.dart';
+import 'package:smart_acadamy/models/students.dart';
 import 'package:smart_acadamy/screens/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smart_acadamy/screens/myAccount.dart';
@@ -27,11 +29,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  // String institutionId;
   int _selectedIndex = 0;
-  final List<Widget> _pages = <Widget>[
-    const HomePage(),
-    const MyAccount(),
-  ];
+  // final List<Widget> _pacges = <Widget>[
+  //   HomePage(institutionId: ,),
+  //   MyAccount(),
+  // ];
   // AppUpdateInfo? _updateInfo;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
@@ -71,37 +74,6 @@ class _HomeState extends State<Home> {
     Provider.of<ConnectivityProvider>(context, listen: false).startMonitoring();
   }
 
-  Future<List<String>> getStatus(docName) async {
-    List<String> a = <String>[];
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection("students")
-          .doc("$docName")
-          .get();
-      if (snapshot.exists) {
-        final data = snapshot.data();
-        if (data == null) {
-          return a;
-        } else {
-          for (var e in snapshot.data()!.values) {
-            print("data123" + e.toString());
-            a.add(e['status']);
-          }
-        }
-      } else {
-        return a;
-      }
-    } catch (e) {
-      print(e.toString());
-
-      a.add("noData");
-    }
-    // if (a == null) {
-    //   a.add("noData");
-    // }
-    return a;
-  }
-
   @override
   Widget build(BuildContext context) {
     var auth = FirebaseAuth.instance.currentUser;
@@ -109,11 +81,11 @@ class _HomeState extends State<Home> {
     var w = context.width;
     return pageUI(
       FutureBuilder(
-        future: getStatus(auth?.uid),
-        builder: (context, snapshot) {
+        future: getStudent(auth?.uid),
+        builder: (context, AsyncSnapshot<Student?> snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data != null) {
-              if (snapshot.data.toString() == "[active]") {
+              if (snapshot.data!.status == "active") {
                 return WillPopScope(
                   onWillPop: () async {
                     return await showDialog(
@@ -153,9 +125,14 @@ class _HomeState extends State<Home> {
                           ),
                         ],
                       ),
-                      body: _pages[_selectedIndex]),
+                      body: <Widget>[
+                        HomePage(
+                          institutionId: snapshot.data!.institutionId,
+                        ),
+                        MyAccount(),
+                      ][_selectedIndex]),
                 );
-              } else if (snapshot.data.toString() == "[expired]") {
+              } else if (snapshot.data!.status == "expired") {
                 return LoadingWidgetWithButton(
                   assetImage: 'assets/images/expired.png',
                   buttonText: 'Logout',
@@ -170,8 +147,6 @@ class _HomeState extends State<Home> {
                       'Your network have been expired.\nkindly contact your institute',
                 );
               } else {
-                print("dfsdf" + snapshot.data.toString());
-
                 return LoadingWidgetWithButton(
                   assetImage: 'assets/images/nonumber.png',
                   buttonText: 'Logout',
@@ -214,13 +189,17 @@ class _HomeState extends State<Home> {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
+  const HomePage({Key? key, required this.institutionId}) : super(key: key);
+  final String institutionId;
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState(institutionId);
 }
 
 class _HomePageState extends State<HomePage> {
+  final String institutionId;
+
+  _HomePageState(this.institutionId);
+
   String greeting() {
     var hour = DateTime.now().hour;
     if (hour < 12) {
@@ -231,16 +210,6 @@ class _HomePageState extends State<HomePage> {
     }
     return 'Evening';
   }
-
-  List<CategorieGrid> cg = [
-    CategorieGrid("Maths", "123/200"),
-    CategorieGrid("Physics", "123/200"),
-    CategorieGrid("Chemistry", "123/200"),
-    CategorieGrid("Biology", "123/200"),
-    CategorieGrid("Computers", "123/200"),
-    CategorieGrid("General Knowledge", "123/200"),
-    CategorieGrid("English", "123/200"),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -275,15 +244,116 @@ class _HomePageState extends State<HomePage> {
             child: Search_with_cards(
               h: h,
               w: w,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: const SubCategories()));
-              },
               text: "Categories",
-              cg: cg,
+              catWidget: FutureBuilder(
+                future: getCategories(institutionId),
+                builder: (context, AsyncSnapshot<List<Categories>> snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data != null) {
+                      if (snapshot.data!.length != 0) {
+                        return GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 220,
+                                    childAspectRatio: 1.8,
+                                    crossAxisSpacing: 0,
+                                    mainAxisSpacing: 20),
+                            padding: EdgeInsets.all(h * 0.01),
+                            physics: const BouncingScrollPhysics(
+                                parent: AlwaysScrollableScrollPhysics()),
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (BuildContext ctx, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      PageTransition(
+                                          type: PageTransitionType
+                                              .rightToLeftWithFade,
+                                          child: SubCategories(
+                                            categoryName:
+                                                snapshot.data![index].name,
+                                            subCategories: snapshot
+                                                .data![index].subCategories,
+                                          )));
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: w * 0.03),
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: w * 0.07),
+                                  width: w,
+                                  decoration: BoxDecoration(
+                                      // ignore: prefer_const_literals_to_create_immutables
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: const Color.fromARGB(
+                                                172, 158, 158, 158),
+                                            spreadRadius: 0.3,
+                                            blurRadius: 5,
+                                            offset: Offset(3, 2)),
+                                      ],
+                                      color: const Color(0xffC377FF),
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: w,
+                                      ),
+                                      FittedBox(
+                                        // width: w * 0.2,
+                                        alignment: Alignment.center,
+                                        fit: BoxFit.cover,
+                                        child: Text(
+                                          snapshot.data![index].name,
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      // Text(cg[index].subText,
+                                      //     style: TextStyle(
+                                      //         fontSize: h * 0.015,
+                                      //         fontWeight: FontWeight.bold,
+                                      //         color: Colors.white)
+                                      //         )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
+                      } else {
+                        return Container(
+                          child: Center(
+                              child:
+                                  Text("Wait for the classes to be uploaded")),
+                        );
+                      }
+                    } else {
+                      return Container();
+                    }
+                  } else {
+                    return Scaffold(
+                      backgroundColor: Colors.white,
+                      body: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(width: w),
+                          // ignore: prefer_const_constructors
+                          CircularProgressIndicator(
+                            color: Colors.purpleAccent,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
             ),
           ),
           Container(

@@ -49,6 +49,7 @@ class ImageAndText extends StatelessWidget {
         Text(
           descriptionText,
           maxLines: 4,
+          textAlign: TextAlign.center,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: h * 0.03),
         ),
       ],

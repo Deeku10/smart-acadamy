@@ -84,7 +84,11 @@ class _MyAppState extends State<MyApp> {
           OnBoarding3.id: ((context) => const OnBoarding3()),
           Login.id: ((context) => const Login()),
           Home.id: ((context) => const Home()),
-          SubCategories.id: ((context) => const SubCategories()),
+          // ignore: prefer_const_constructors
+          SubCategories.id: ((context) => SubCategories(
+                categoryName: '',
+                subCategories: [],
+              )),
           PracticePaper.id: ((context) => const PracticePaper()),
           InstructionPage.id: ((context) => const InstructionPage()),
           ExamPage.id: ((context) => ExamPage()),

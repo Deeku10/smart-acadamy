@@ -9,15 +9,14 @@ class Search_with_cards extends StatelessWidget {
     required this.h,
     required this.w,
     required this.text,
-    required this.onTap,
-    required this.cg,
+    required this.catWidget,
   }) : super(key: key);
 
   final double h;
   final double w;
   final String text;
-  final List<CategorieGrid> cg;
-  final Function onTap;
+  final Widget catWidget;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -60,67 +59,7 @@ class Search_with_cards extends StatelessWidget {
             ),
           ],
         ),
-        Expanded(
-          child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 220,
-                  childAspectRatio: 1.8,
-                  crossAxisSpacing: 0,
-                  mainAxisSpacing: 20),
-              padding: EdgeInsets.all(h * 0.01),
-              physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics()),
-              itemCount: cg.length,
-              itemBuilder: (BuildContext ctx, index) {
-                return GestureDetector(
-                  onTap: () {
-                    onTap();
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: w * 0.03),
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.symmetric(horizontal: w * 0.07),
-                    width: w,
-                    decoration: BoxDecoration(
-                        // ignore: prefer_const_literals_to_create_immutables
-                        boxShadow: [
-                          BoxShadow(
-                              color: const Color.fromARGB(172, 158, 158, 158),
-                              spreadRadius: 0.3,
-                              blurRadius: 5,
-                              offset: Offset(3, 2)),
-                        ],
-                        color: const Color(0xffC377FF),
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: w,
-                        ),
-                        FittedBox(
-                          // width: w * 0.2,
-                          alignment: Alignment.center,
-                          fit: BoxFit.cover,
-                          child: Text(
-                            cg[index].head,
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Text(cg[index].subText,
-                            style: TextStyle(
-                                fontSize: h * 0.015,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white))
-                      ],
-                    ),
-                  ),
-                );
-              }),
-        )
+        Expanded(child: catWidget)
       ],
     );
   }
