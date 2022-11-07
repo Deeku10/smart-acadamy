@@ -8,6 +8,7 @@ import 'package:smart_acadamy/screens/home.dart';
 import 'package:smart_acadamy/screens/networkError.dart';
 import 'package:smart_acadamy/widgets/resultContainer.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_acadamy/widgets/smallButton.dart';
 
 class ResultPage extends StatefulWidget {
   const ResultPage({Key? key}) : super(key: key);
@@ -97,6 +98,33 @@ class _ResultPageState extends State<ResultPage> {
                       text2: '10',
                       textColor: Colors.white,
                     ),
+                    SizedBox(
+                      height: h * 0.21,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SmallButton(
+                            h: h * 1.1,
+                            w: w * 1.7,
+                            onTap: () {
+                              () {};
+                            },
+                            buttonText: "REATTEMPT",
+                            color: Colors.grey),
+                        SizedBox(
+                          width: w * 0.06,
+                        ),
+                        SmallButton(
+                            h: h * 1.1,
+                            w: w * 1.7,
+                            onTap: () {
+                              () {};
+                            },
+                            buttonText: "VIEW RESULTS",
+                            color: const Color(0xff9700CC)),
+                      ],
+                    )
                   ],
                 )),
           ],

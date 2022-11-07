@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import, depend_on_referenced_packages, duplicate_ignore, use_build_context_synchronously, prefer_const_constructors, no_logic_in_create_state, prefer_is_empty, avoid_unnecessary_containers
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -19,6 +21,7 @@ import 'package:smart_acadamy/widgets/loadingWidget.dart';
 import 'package:smart_acadamy/widgets/search_with_cards.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -128,8 +131,11 @@ class _HomeState extends State<Home> {
                       body: <Widget>[
                         HomePage(
                           institutionId: snapshot.data!.institutionId,
+                          studentId: auth!.uid,
                         ),
-                        MyAccount(),
+                        MyAccount(
+                          studentId: auth.uid,
+                        ),
                       ][_selectedIndex]),
                 );
               } else if (snapshot.data!.status == "expired") {
@@ -189,16 +195,22 @@ class _HomeState extends State<Home> {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.institutionId}) : super(key: key);
+  const HomePage(
+      {Key? key, required this.institutionId, required this.studentId})
+      : super(key: key);
   final String institutionId;
+  final String studentId;
+
   @override
-  State<HomePage> createState() => _HomePageState(institutionId);
+  State<HomePage> createState() => _HomePageState(institutionId, studentId);
 }
 
 class _HomePageState extends State<HomePage> {
   final String institutionId;
 
-  _HomePageState(this.institutionId);
+  final String studentId;
+
+  _HomePageState(this.institutionId, this.studentId);
 
   String greeting() {
     var hour = DateTime.now().hour;
@@ -337,20 +349,62 @@ class _HomePageState extends State<HomePage> {
                       return Container();
                     }
                   } else {
-                    return Scaffold(
-                      backgroundColor: Colors.white,
-                      body: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(width: w),
-                          // ignore: prefer_const_constructors
-                          CircularProgressIndicator(
-                            color: Colors.purpleAccent,
-                          ),
-                        ],
-                      ),
-                    );
+                    return Shimmer.fromColors(
+                        baseColor: Colors.black12,
+                        highlightColor: Colors.white,
+                        child: GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 220,
+                                    childAspectRatio: 1.8,
+                                    crossAxisSpacing: 0,
+                                    mainAxisSpacing: 20),
+                            padding: EdgeInsets.all(h * 0.01),
+                            physics: const BouncingScrollPhysics(
+                                parent: AlwaysScrollableScrollPhysics()),
+                            itemCount: 6,
+                            itemBuilder: (BuildContext ctx, index) {
+                              return Container(
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: w * 0.03),
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: w * 0.07),
+                                  width: w,
+                                  decoration: BoxDecoration(
+                                      // ignore: prefer_const_literals_to_create_immutables
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: const Color.fromARGB(
+                                                172, 158, 158, 158),
+                                            spreadRadius: 0.3,
+                                            blurRadius: 5,
+                                            offset: Offset(3, 2)),
+                                      ],
+                                      color: const Color(0xffC377FF),
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: w,
+                                      ),
+                                      FittedBox(
+                                        // width: w * 0.2,
+                                        alignment: Alignment.center,
+                                        fit: BoxFit.cover,
+                                        child: Text(
+                                          "Maths",
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ));
+                            }));
                   }
                 },
               ),
@@ -415,25 +469,68 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    RichText(
-                      text: TextSpan(
-                        // Note: Styles for TextSpans must be explicitly defined.
-                        // Child text spans will inherit styles from parent
-                        style: const TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.black,
-                        ),
-                        children: <TextSpan>[
-                          TextSpan(
-                              text: 'Hello ',
-                              style: TextStyle(fontSize: h * 0.026)),
-                          TextSpan(
-                              text: 'Aravind !',
+                    FutureBuilder(
+                      future: getName(studentId),
+                      builder: (context, AsyncSnapshot<String> snapshot) {
+                        print("student id from home is ${studentId}");
+                        if (snapshot.hasData) {
+                          if (snapshot.data != null) {
+                            List<String> name = snapshot.data!.split(" ");
+                            return RichText(
+                              text: TextSpan(
+                                // Note: Styles for TextSpans must be explicitly defined.
+                                // Child text spans will inherit styles from parent
+                                style: const TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.black,
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: 'Hello ',
+                                      style: TextStyle(fontSize: h * 0.026)),
+                                  TextSpan(
+                                      text: '${name[0]} !',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: h * 0.026)),
+                                ],
+                              ),
+                            );
+                          } else {
+                            return Text(
+                              "Hello",
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: h * 0.026)),
-                        ],
-                      ),
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: h * 0.03),
+                            );
+                          }
+                        } else {
+                          return Shimmer.fromColors(
+                            baseColor: Colors.black12,
+                            highlightColor: Colors.white,
+                            child: RichText(
+                              text: TextSpan(
+                                // Note: Styles for TextSpans must be explicitly defined.
+                                // Child text spans will inherit styles from parent
+                                style: const TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.black,
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: 'Hello ',
+                                      style: TextStyle(fontSize: h * 0.026)),
+                                  TextSpan(
+                                      text: 'Aravind !',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: h * 0.026)),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                      },
                     ),
                     // Text(
                     //   "Hello Aravind !",

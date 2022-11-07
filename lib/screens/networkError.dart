@@ -1,4 +1,4 @@
-// ignore_for_file: implementation_imports, unnecessary_import, file_names
+// ignore_for_file: implementation_imports, unnecessary_import, file_names, depend_on_referenced_packages, prefer_final_fields, prefer_interpolation_to_compose_strings, avoid_print, unnecessary_null_comparison, prefer_const_constructors
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';

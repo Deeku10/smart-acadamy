@@ -41,7 +41,7 @@ class SmallButton extends StatelessWidget {
             style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: h * 0.02),
+                fontSize: h * 0.017),
           ),
         ),
       ),

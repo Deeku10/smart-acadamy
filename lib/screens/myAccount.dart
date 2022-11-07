@@ -2,16 +2,28 @@
 
 import 'package:flutter/material.dart';
 import 'package:smart_acadamy/heightWidth.dart';
+import 'package:smart_acadamy/models/students.dart';
 import 'package:smart_acadamy/screens/home.dart';
 import 'package:smart_acadamy/screens/login.dart';
 import 'package:smart_acadamy/widgets/button.dart';
 import 'package:page_transition/page_transition.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shimmer/shimmer.dart';
 
-class MyAccount extends StatelessWidget {
-  const MyAccount({Key? key}) : super(key: key);
+class MyAccount extends StatefulWidget {
+  const MyAccount({Key? key, required this.studentId}) : super(key: key);
   static const id = "/myAccount";
+  final String studentId;
+  @override
+  State<MyAccount> createState() => _MyAccountState(studentId);
+}
+
+class _MyAccountState extends State<MyAccount> {
+  String studentId;
+
+  _MyAccountState(this.studentId);
+
   @override
   Widget build(BuildContext context) {
     var h = context.height;
@@ -77,10 +89,37 @@ class MyAccount extends StatelessWidget {
                     backgroundImage:
                         const AssetImage("assets/images/profile.png"),
                   ),
-                  Text(
-                    "Aravind Dada",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w900, fontSize: h * 0.03),
+                  FutureBuilder(
+                    future: getName(studentId),
+                    builder: (context, AsyncSnapshot<String> snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data != null) {
+                          return Text(
+                            snapshot.data!,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: h * 0.03),
+                          );
+                        } else {
+                          return Text(
+                            "Hello",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: h * 0.03),
+                          );
+                        }
+                      } else {
+                        return Shimmer.fromColors(
+                            baseColor: Colors.black12,
+                            highlightColor: Colors.white,
+                            child: Text(
+                              "Aravind Dada",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: h * 0.03),
+                            ));
+                      }
+                    },
                   ),
                   Text(
                     "Valid till: 23/07/2022",
@@ -97,6 +136,7 @@ class MyAccount extends StatelessWidget {
             ),
             Button(
               floatOnTap: () async {
+                deleteName();
                 await FirebaseAuth.instance.signOut();
                 Navigator.pushNamedAndRemoveUntil(
                     context, Login.id, (route) => false);

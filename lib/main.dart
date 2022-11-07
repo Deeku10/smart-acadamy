@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, avoid_print
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -77,7 +77,6 @@ class _MyAppState extends State<MyApp> {
         initialRoute: FirebaseAuth.instance.currentUser == null
             ? OnBoarding1.id
             : Home.id,
-        //initialRoute: OnBoarding1.id,
         routes: {
           OnBoarding1.id: ((context) => const OnBoarding1()),
           OnBoarding2.id: ((context) => const OnBoarding2()),
@@ -87,13 +86,13 @@ class _MyAppState extends State<MyApp> {
           // ignore: prefer_const_constructors
           SubCategories.id: ((context) => SubCategories(
                 categoryName: '',
-                subCategories: [],
+                subCategories: const [],
               )),
           PracticePaper.id: ((context) => const PracticePaper()),
           InstructionPage.id: ((context) => const InstructionPage()),
           ExamPage.id: ((context) => ExamPage()),
           ResultPage.id: ((context) => const ResultPage()),
-          MyAccount.id: ((context) => const MyAccount()),
+          // MyAccount.id: ((context) => const MyAccount()),
           NetworkError.id: ((context) => const NetworkError()),
           Loading.id: ((context) => const Loading()),
         },

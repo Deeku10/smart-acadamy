@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable
+// ignore_for_file: unused_local_variable, unused_import, depend_on_referenced_packages, unnecessary_null_comparison, avoid_print
 
 import 'package:flutter/foundation.dart';
 import 'package:smart_acadamy/screens/subcategories.dart';

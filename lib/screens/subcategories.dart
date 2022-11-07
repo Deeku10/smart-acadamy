@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_import, depend_on_referenced_packages
+// ignore_for_file: unnecessary_import, depend_on_referenced_packages, prefer_const_constructors
 
 import 'dart:ui';
 import 'package:page_transition/page_transition.dart';

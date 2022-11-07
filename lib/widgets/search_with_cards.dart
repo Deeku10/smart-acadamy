@@ -1,4 +1,4 @@
-// ignore_for_file: camel_case_types, prefer_const_constructors, sort_child_properties_last
+// ignore_for_file: camel_case_types, prefer_const_constructors, sort_child_properties_last, unused_import
 
 import 'package:flutter/material.dart';
 import 'package:smart_acadamy/models/categoriesGrid.dart';
