@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:smart_acadamy/models/questions.dart';
 import 'package:smart_acadamy/screens/examPage.dart';
 import 'package:smart_acadamy/screens/home.dart';
 import 'package:smart_acadamy/screens/instructionPage.dart';
@@ -68,7 +69,10 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(
           create: (BuildContext context) => ConnectivityProvider(),
-        )
+        ),
+        ChangeNotifierProvider(
+          create: (BuildContext context) => QuestionIndexProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -77,6 +81,7 @@ class _MyAppState extends State<MyApp> {
         initialRoute: FirebaseAuth.instance.currentUser == null
             ? OnBoarding1.id
             : Home.id,
+        //initialRoute: ExamPage.id,
         routes: {
           OnBoarding1.id: ((context) => const OnBoarding1()),
           OnBoarding2.id: ((context) => const OnBoarding2()),
@@ -89,9 +94,9 @@ class _MyAppState extends State<MyApp> {
                 subCategories: const [],
               )),
           PracticePaper.id: ((context) => const PracticePaper()),
-          InstructionPage.id: ((context) => const InstructionPage()),
-          ExamPage.id: ((context) => ExamPage()),
-          ResultPage.id: ((context) => const ResultPage()),
+          // InstructionPage.id: ((context) => const InstructionPage()),
+
+          // ResultPage.id: ((context) => ResultPage()),
           // MyAccount.id: ((context) => const MyAccount()),
           NetworkError.id: ((context) => const NetworkError()),
           Loading.id: ((context) => const Loading()),

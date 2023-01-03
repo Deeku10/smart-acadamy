@@ -3,6 +3,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:smart_acadamy/screens/subcategories.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Categories {
   String id, name;
@@ -31,6 +32,7 @@ Future<List<Categories>> getCategories(docName) async {
         .get();
     if (snapshot.exists) {
       final data = snapshot.data()!;
+      // print("dfds" + data.toString());
       if (data == null) {
         return categoryList;
       } else {
@@ -47,6 +49,15 @@ Future<List<Categories>> getCategories(docName) async {
           categoryList[index].subCategories = subCat;
           index++;
         }
+        //getting acadamy Name
+//snapshot.data()!["name"];
+        String acadamyName = "";
+        await getAcadamyName().then((value) {
+          acadamyName = value;
+        });
+        if (acadamyName == "noData" || acadamyName == "") {
+          setAcadamyName(snapshot.data()!["name"]);
+        }
       }
     } else {
       return categoryList;
@@ -55,4 +66,34 @@ Future<List<Categories>> getCategories(docName) async {
     print(e.toString()); // a.add("noData");
   }
   return categoryList;
+}
+
+Future<String> getAcadamyName() async {
+  // Obtain shared preferences.
+  final prefs = await SharedPreferences.getInstance();
+  // final name = prefs.getStringList('name');
+  final String? name = prefs.getString('acadamyName');
+  if (name != null) {
+    if (name.isNotEmpty) {
+      return name;
+    } else {
+      return "noData";
+    }
+  } else {
+    return "noData";
+  }
+}
+
+//set name in sp
+void setAcadamyName(String a) async {
+  String name = a;
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('acadamyName', name);
+}
+
+//delete name from local storage
+void deleteAcadamyName() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  await prefs.remove('acadamyName');
 }

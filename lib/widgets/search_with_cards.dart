@@ -10,11 +10,14 @@ class Search_with_cards extends StatelessWidget {
     required this.w,
     required this.text,
     required this.catWidget,
+    required this.labelText,
   }) : super(key: key);
 
   final double h;
   final double w;
   final String text;
+  final String labelText;
+
   final Widget catWidget;
 
   @override
@@ -34,7 +37,8 @@ class Search_with_cards extends StatelessWidget {
           child: TextField(
             decoration: InputDecoration(
                 border: InputBorder.none,
-                labelText: 'Search in Categories',
+                labelStyle: TextStyle(color: Color(0xffC377FF)),
+                labelText: labelText,
                 hintText: 'EX:Math'),
             cursorColor: Color(0xffC377FF),
           ),
@@ -54,7 +58,7 @@ class Search_with_cards extends StatelessWidget {
               text,
               style: TextStyle(
                   color: Colors.black,
-                  fontSize: h * 0.026,
+                  fontSize: h * 0.023,
                   fontWeight: FontWeight.w900),
             ),
           ],

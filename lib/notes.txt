@@ -1,11 +1,21 @@
-//bottom navigation bar 
-bottom sheet
-//List data for gridview
-search bar //
-questions based on data
-adding pop up
-//result page containers
-//loading widget
-adding next and back in exam page
-//extracting widget
-horn button in home page
+{"result":
+{"success":true,
+"msg":"Attemp added succesfully :)",
+"code":0,
+"data":{"correct":1,"wrong":2,"notAnswered":7,
+       "questionsId":"ZaMA3C4ghFdBvdXHQFC7",
+       "studentId":"hbtPJBRhORR46zfJ6MyTZDVYjEm1",
+       "marks":-1,
+"total":10,
+"answers":[
+  {"answer":"d","marks":-1,"status":"Wrong"},
+  {"answer":"a","marks":1,"status":"Correct"},
+  {"answer":"c","marks":-1,"status":"Wrong"},
+  {"answer":null,"marks":0,"status":"Not Answered"},
+  {"answer":null,"marks":0,"status":"Not Answered"},
+  {"answer":null,"marks":0,"status":"Not Answered"},
+  {"answer":null,"marks":0,"status":"Not Answered"},
+  {"answer":null,"marks":0,"status":"Not Answered"},
+  {"answer":null,"marks":0,"status":"Not Answered"},
+  {"answer":null,"marks":0,"status":"Not Answered"}
+  ]}}}

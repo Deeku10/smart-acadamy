@@ -146,6 +146,7 @@ class _HomeState extends State<Home> {
                   w: w,
                   onTap: () async {
                     await FirebaseAuth.instance.signOut();
+
                     Navigator.pushNamedAndRemoveUntil(
                         context, Login.id, (route) => false);
                   },
@@ -254,6 +255,7 @@ class _HomePageState extends State<HomePage> {
             margin: EdgeInsets.only(top: h * 0.33),
             height: h * 0.77,
             child: Search_with_cards(
+              labelText: 'Search in Categories',
               h: h,
               w: w,
               text: "Categories",
@@ -280,6 +282,7 @@ class _HomePageState extends State<HomePage> {
                                   Navigator.push(
                                       context,
                                       PageTransition(
+                                          curve: Curves.slowMiddle,
                                           type: PageTransitionType
                                               .rightToLeftWithFade,
                                           child: SubCategories(
@@ -410,40 +413,42 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(left: w * 0.39, bottom: h * 0.3257),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/images/crown.png",
-                  height: h * 0.045,
-                ),
-                CircleAvatar(
-                  backgroundImage:
-                      const AssetImage("assets/images/homeTopCircle.png"),
-                  radius: w * 0.09,
-                  child: Text(
-                    "12",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: h * 0.021),
-                  ),
-                ),
-                Text(
-                  "114/500",
-                  style: TextStyle(
-                      color: const Color(0xff725902),
-                      fontSize: h * 0.025,
-                      letterSpacing: 1.1,
-                      fontWeight: FontWeight.w900),
-                ),
-                // SizedBox(
-                //   height: h * 0.33,
-                // ),
-              ],
-            ),
-          ),
+
+          // Container(
+          //   margin: EdgeInsets.only(left: w * 0.39, bottom: h * 0.3257),
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     crossAxisAlignment: CrossAxisAlignment.center,
+          //     children: [
+          //       Image.asset(
+          //         "assets/images/crown.png",
+          //         height: h * 0.045,
+          //       ),
+          //       CircleAvatar(
+          //         backgroundImage:
+          //             const AssetImage("assets/images/homeTopCircle.png"),
+          //         radius: w * 0.09,
+          //         child: Text(
+          //           "12",
+          //           style: TextStyle(
+          //               fontWeight: FontWeight.bold, fontSize: h * 0.021),
+          //         ),
+          //       ),
+          //       Text(
+          //         "114/500",
+          //         style: TextStyle(
+          //             color: const Color(0xff725902),
+          //             fontSize: h * 0.025,
+          //             letterSpacing: 1.1,
+          //             fontWeight: FontWeight.w900),
+          //       ),
+          //       // SizedBox(
+          //       //   height: h * 0.33,
+          //       // ),
+          //     ],
+          //   ),
+          // ),
+
           Container(
             margin: EdgeInsets.only(left: w * 0.05, top: h * 0.1),
             height: h * 0.1,

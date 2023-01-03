@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:smart_acadamy/heightWidth.dart';
+import 'package:smart_acadamy/models/institution.dart';
 import 'package:smart_acadamy/models/students.dart';
 import 'package:smart_acadamy/screens/home.dart';
 import 'package:smart_acadamy/screens/login.dart';
@@ -56,12 +57,37 @@ class _MyAccountState extends State<MyAccount> {
               width: w,
               height: h * 0.05,
             ),
-            Text(
-              "Master JEE Acadamy",
-              style: TextStyle(
-                  color: const Color(0xff4D4949),
-                  fontWeight: FontWeight.w900,
-                  fontSize: h * 0.026),
+            FutureBuilder(
+              future: getAcadamyName(),
+              builder: (context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data != null) {
+                    return Text(
+                      snapshot.data!,
+                      style: TextStyle(
+                          color: const Color(0xff4D4949),
+                          fontWeight: FontWeight.w900,
+                          fontSize: h * 0.026),
+                    );
+                  } else {
+                    return Text(
+                      "Acadamy",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w900, fontSize: h * 0.03),
+                    );
+                  }
+                } else {
+                  return Shimmer.fromColors(
+                      baseColor: Colors.black12,
+                      highlightColor: Colors.white,
+                      child: Center(
+                          child: Container(
+                        height: h * 0.02,
+                        width: w * 0.75,
+                        color: Colors.grey,
+                      )));
+                }
+              },
             ),
             SizedBox(
               height: h * 0.04,
@@ -98,7 +124,7 @@ class _MyAccountState extends State<MyAccount> {
                             snapshot.data!,
                             style: TextStyle(
                                 fontWeight: FontWeight.w900,
-                                fontSize: h * 0.03),
+                                fontSize: h * 0.026),
                           );
                         } else {
                           return Text(
@@ -137,12 +163,13 @@ class _MyAccountState extends State<MyAccount> {
             Button(
               floatOnTap: () async {
                 deleteName();
+                deleteAcadamyName();
                 await FirebaseAuth.instance.signOut();
                 Navigator.pushNamedAndRemoveUntil(
                     context, Login.id, (route) => false);
               },
-              h: h,
-              w: w,
+              h: h * 0.95,
+              w: w * 1.5,
               floatingButtonText: 'LOGOUT',
               textColor: Colors.white,
               buttonColor: const Color(0xff9700CC),

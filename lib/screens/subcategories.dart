@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_acadamy/heightWidth.dart';
 
 import 'package:smart_acadamy/models/institution.dart';
+import 'package:smart_acadamy/screens/instructionPage.dart';
 import 'package:smart_acadamy/screens/networkError.dart';
 import 'package:smart_acadamy/screens/practicePaper.dart';
 import 'package:smart_acadamy/widgets/search_with_cards.dart';
@@ -67,6 +68,7 @@ class _SubCategoriesState extends State<SubCategories> {
             backgroundColor: const Color(0xff7F63FE),
           ),
           body: Search_with_cards(
+            labelText: 'Search in SubCategories',
             h: h,
             w: w,
             text: "Sub Categories",
@@ -86,8 +88,12 @@ class _SubCategoriesState extends State<SubCategories> {
                       Navigator.push(
                           context,
                           PageTransition(
-                              type: PageTransitionType.rightToLeftWithFade,
-                              child: PracticePaper()));
+                              type: PageTransitionType.topToBottom,
+                              child: InstructionPage(
+                                categories: categoryName,
+                                qid: subCategories[index].id,
+                                subCategories: subCategories[index].name,
+                              )));
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: w * 0.03),

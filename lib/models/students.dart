@@ -53,8 +53,8 @@ Future<String> getName(docName) async {
     name = value;
     print("${value.toString()} recieved locally");
   });
-  if (name != "noData" || name == "") {
-    getNamefromDb(docName).then((value) {
+  if (name == "noData" || name == "") {
+    await getNamefromDb(docName).then((value) {
       name = value;
       print("${value.toString()} recieved from friebase");
     });
@@ -120,7 +120,5 @@ void setNameinSp(String a) async {
 void deleteName() async {
   final prefs = await SharedPreferences.getInstance();
 
-  await prefs.remove('firstName');
-  await prefs.remove('lastName');
-  print('deleted');
+  await prefs.remove('name');
 }
